@@ -21,7 +21,7 @@ class OptionsMenu extends MusicBeatState
 {
 	var selector:FlxText;
 	var curSelected:Int = 0;
-	public static var instance:OptionsMenu;
+
 	public static var bgcol:FlxColor = 0xFFeaeaea;
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
@@ -76,7 +76,7 @@ class OptionsMenu extends MusicBeatState
 	private var currentDescription:String = "";
 	private var grpControls:FlxTypedGroup<Alphabet>;
 	public static var versionShit:FlxText;
-	public var acceptInput:Bool = true;
+
 
 
 	var currentSelectedCat:OptionCatagory;

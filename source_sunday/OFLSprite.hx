@@ -6,34 +6,36 @@ import flixel.FlxSprite;
  * designed to draw a Open FL Sprite as a FlxSprite (to allow layering and auto sizing for haxe flixel cameras)
  * Custom made for Kade Engine
  */
+@:keep
 class OFLSprite extends FlxSprite
 {
-    public var flSprite:Sprite;
+	public var flSprite:Sprite;
 
-    public function new(x,y,width,height,Sprite:Sprite)
-    {
-        super(x,y);
+	public function new(x, y, width, height, Sprite:Sprite)
+	{
+		super(x, y);
 
-        makeGraphic(width,height,FlxColor.TRANSPARENT);
+		makeGraphic(width, height, FlxColor.TRANSPARENT);
 
-        flSprite = Sprite;
+		flSprite = Sprite;
 
-        pixels.draw(flSprite);
-    }
+		pixels.draw(flSprite);
+	}
 
-    private var _frameCount:Int = 0;
+	private var _frameCount:Int = 0;
 
 	override function update(elapsed:Float)
-    {
-        if (_frameCount != 2)
-        {
-            pixels.draw(flSprite);
-            _frameCount++;
-        }
-    }
+	{
+		if (_frameCount != 2)
+		{
+			pixels.draw(flSprite);
+			_frameCount++;
+		}
+	}
 
-    public function updateDisplay()
-    {
-        pixels.draw(flSprite);
-    }
+	public function updateDisplay()
+	{
+		pixels.disposeImage();
+		pixels.draw(flSprite);
+	}
 }

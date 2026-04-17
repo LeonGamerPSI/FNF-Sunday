@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxRect;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -23,7 +24,6 @@ class Note extends FlxSprite
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var prevNote:Note;
-	public var modifiedByLua:Bool = false;
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
 	public var style:String = "";
@@ -37,16 +37,16 @@ class Note extends FlxSprite
 	public static var RED_NOTE:Int = 3;
 
 	public var rating:String = "shit";
+	public var hit:Bool = false;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false,style:String="normal", ?inCharter:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, style:String = "normal", ?inCharter:Bool = false)
 	{
 		super();
 
 		if (prevNote == null)
 			prevNote = this;
 
-			
-			this.style = style;
+		this.style = style;
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 
@@ -55,10 +55,10 @@ class Note extends FlxSprite
 		y -= 2000;
 		if (inCharter)
 			this.strumTime = strumTime;
-		else 
+		else
 			this.strumTime = Math.round(strumTime);
 
-		if (this.strumTime < 0 )
+		if (this.strumTime < 0)
 			this.strumTime = 0;
 
 		this.noteData = noteData;
@@ -68,7 +68,7 @@ class Note extends FlxSprite
 		switch (style)
 		{
 			case 'pixel':
-				loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels','week6'), true, 17, 17);
+				loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels', 'week6'), true, 17, 17);
 
 				animation.add('greenScroll', [6]);
 				animation.add('redScroll', [7]);
@@ -77,7 +77,7 @@ class Note extends FlxSprite
 
 				if (isSustainNote)
 				{
-					loadGraphic(Paths.image('weeb/pixelUI/arrowEnds','week6'), true, 7, 6);
+					loadGraphic(Paths.image('weeb/pixelUI/arrowEnds', 'week6'), true, 7, 6);
 
 					animation.add('purpleholdend', [4]);
 					animation.add('greenholdend', [6]);
@@ -114,20 +114,20 @@ class Note extends FlxSprite
 			default:
 				frames = Paths.getSparrowAtlas('NOTE_assets');
 
-				animation.addByPrefix('greenScroll', 'green instance 1');
-				animation.addByPrefix('redScroll', 'red instance 1');
-				animation.addByPrefix('blueScroll', 'blue instance 1');
-				animation.addByPrefix('purpleScroll', 'purple instance 1');
+				animation.addByPrefix('greenScroll', 'green0');
+				animation.addByPrefix('redScroll', 'red0');
+				animation.addByPrefix('blueScroll', 'blue0');
+				animation.addByPrefix('purpleScroll', 'purple0');
 
-				animation.addByPrefix('purpleholdend', 'pruple end hold instance 1');
-				animation.addByPrefix('greenholdend', 'green hold end instance 1');
-				animation.addByPrefix('redholdend', 'red hold end instance 1');
-				animation.addByPrefix('blueholdend', 'blue hold end instance 1');
+				animation.addByPrefix('purpleholdend', 'purple hold end0');
+				animation.addByPrefix('greenholdend', 'green hold end0');
+				animation.addByPrefix('redholdend', 'red hold end0');
+				animation.addByPrefix('blueholdend', 'blue hold end0');
 
-				animation.addByPrefix('purplehold', 'purple hold piece instance 1');
-				animation.addByPrefix('greenhold', 'green hold piece instance 1');
-				animation.addByPrefix('redhold', 'red hold piece instance 1');
-				animation.addByPrefix('bluehold', 'blue hold piece instance 1');
+				animation.addByPrefix('purplehold', 'purple hold piece0');
+				animation.addByPrefix('greenhold', 'green hold piece0');
+				animation.addByPrefix('redhold', 'red hold piece0');
+				animation.addByPrefix('bluehold', 'blue hold piece0');
 
 				setGraphicSize(Std.int(width * 0.7));
 				updateHitbox();
@@ -150,24 +150,23 @@ class Note extends FlxSprite
 				animation.play('redScroll');
 		}
 
-		
-		
-			if (style == "guitar"){
-				offset.x = -15;
-				offset.y = -30;
-			}
+		if (style == "guitar")
+		{
+			offset.x = -15;
+			offset.y = -30;
+		}
 		// trace(prevNote);
 
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
 		// and flip it so it doesn't look weird.
 		// THIS DOESN'T FUCKING FLIP THE NOTE, CONTRIBUTERS DON'T JUST COMMENT THIS OUT JESUS
-		if (FlxG.save.data.downscroll && sustainNote) 
+		if (FlxG.save.data.downscroll && sustainNote)
 			flipY = true;
 
 		if (isSustainNote && prevNote != null)
 		{
 			noteScore * 0.2;
-			alpha = 0.6;
+			alpha = mA = 0.6;
 
 			x += width / 2;
 
@@ -186,23 +185,25 @@ class Note extends FlxSprite
 			updateHitbox();
 
 			x -= width / 2;
-			if (style == "guitar"){
-			x -= width ;
+			if (style == "guitar")
+			{
+				x -= width;
 			}
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
-				
-				
-				//OFFSET ENDNOTES
-				
-			if (style == "guitar"){
-				//x -= 30;
+
+			// OFFSET ENDNOTES
+
+			if (style == "guitar")
+			{
+				// x -= 30;
 			}
-				
-				if (style == "guitar"){
-					offset.x = -15;
-					//offset.y = -30;
-				}
+
+			if (style == "guitar")
+			{
+				offset.x = -15;
+				// offset.y = -30;
+			}
 
 			if (prevNote.isSustainNote)
 			{
@@ -218,22 +219,24 @@ class Note extends FlxSprite
 						prevNote.animation.play('redhold');
 				}
 
-				//OFFSET hold notes
-					
-				
-				if(FlxG.save.data.scrollSpeed != 1)
+				// OFFSET hold notes
+
+				if (FlxG.save.data.scrollSpeed != 1)
 					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * FlxG.save.data.scrollSpeed;
 				else
 					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
-				if (style == "guitar"){
-					//offset.x = -35;
-					//offset.y = -30;
+				if (style == "guitar")
+				{
+					// offset.x = -35;
+					// offset.y = -30;
 				}
 				// prevNote.setGraphicSize();
 			}
 		}
 	}
+
+	public var mA:Float = 1;
 
 	override function update(elapsed:Float)
 	{
@@ -242,18 +245,20 @@ class Note extends FlxSprite
 		if (mustPress)
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+			if (strumTime >= Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+				&& strumTime <= Conductor.songPosition)
 				canBeHit = true;
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset * Conductor.timeScale && !wasGoodHit)
+			if (strumTime <= Conductor.songPosition - Conductor.safeZoneOffset * Conductor.timeScale && !wasGoodHit)
 				tooLate = true;
 		}
 		else
 		{
-			canBeHit = false;
+			if (canBeHit)
+				canBeHit = false;
+	
 
 			if (strumTime <= Conductor.songPosition)
 				wasGoodHit = true;
@@ -263,6 +268,35 @@ class Note extends FlxSprite
 		{
 			if (alpha > 0.3)
 				alpha = 0.3;
+		}
+	}
+
+	public function clipToStrumNote(myStrum:FlxSprite, downScroll:Bool = false)
+	{
+		var center:Float = myStrum.y + swagWidth * 0.5;
+		var ignoreNote = !visible;
+		if ((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit)))
+		{
+			var swagRect:FlxRect = clipRect;
+			if (swagRect == null)
+				swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
+
+			if (downScroll)
+			{
+				if (y + height >= center)
+				{
+					swagRect.width = frameWidth;
+					swagRect.height = (center - y) / scale.y;
+					swagRect.y = frameHeight - swagRect.height;
+				}
+			}
+			else if (y <= center)
+			{
+				swagRect.y = (center - y) / scale.y;
+				swagRect.width = width / scale.x;
+				swagRect.height = (height / scale.y) - swagRect.y;
+			}
+			clipRect = swagRect;
 		}
 	}
 }
